@@ -1,7 +1,7 @@
 import { TextContent } from "@zenvia/sdk";
 
-function newMessage(message: string): TextContent {
+function createText(message: string): TextContent {
   return new TextContent(message);
 }
 
-export default newMessage;
+export default createText;
