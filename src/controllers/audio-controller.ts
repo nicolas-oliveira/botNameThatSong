@@ -1,34 +1,32 @@
-import post from "got";
-import FormData from "form-data";
+import axios from "axios";
 import { SongResponse } from "../types/song";
 
 async function recognizeMusic(url: string) {
-  
-  const form = new FormData();
-  form.append("api_token", process.env.AUDD_TOKEN);
-  form.append("url", url);
-  form.append("return", "deezer");
 
-  const response: SongResponse = await post("https://api.audd.io/", {
-    body: form,
-    responseType: "json",
-    resolveBodyOnly: true,
-  });
+  const body = {
+    api_token: process.env.AUDD_TOKEN,
+    return: "spotify",
+    url: url
+  }
+
+  const response = (await axios.post("https://api.audd.io/", body)).data as SongResponse;
 
   if (response && response.result) {
     return {
       artist: response.result.artist,
       title: response.result.title,
       album: response.result.album,
-      deezer: {
+      spotify: {
         picture:
-          response.result.deezer && response.result.deezer.artist
-            ? response.result.deezer.artist.picture_medium
-            : undefined,
-        preview: response.result.deezer
-          ? response.result.deezer.preview
-          : undefined,
+          (response.result.spotify?.album?.images[0]?.url ?
+            response.result.spotify?.album.images[0].url
+            : undefined),
+        preview:
+          (response.result.spotify?.preview_url ?
+            response.result.spotify?.preview_url
+            : undefined)
       },
+      song_link: response.result.song_link
     };
   }
 }

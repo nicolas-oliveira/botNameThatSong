@@ -7,11 +7,12 @@ class App {
      */
 
     public async start() {
-        const client = new Client(process.env.ZENVIA_TOKEN),
-            channel = client.getChannel(process.env.CHANNEL as any),
-            webhook = await createWebHook(channel);
+        const client = new Client(process.env.ZENVIA_TOKEN);
+        const channelType = process.env.CHANNEL as any;
+        const channel = client.getChannel(channelType);
+        const webhook = await createWebHook(channel, channelType);
         webhook.on("listening", () => {
-            console.info("Webhook is listening");
+            console.info("Webhook started and is listening on port 3000");
         });
 
         webhook.init();

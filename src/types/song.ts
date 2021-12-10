@@ -6,5 +6,6 @@ export type SongDetails = {
   artist: string;
   title: string;
   album: string;
-  deezer: Deezer;
+  song_link: string;
+  spotify: Spotify;
 };

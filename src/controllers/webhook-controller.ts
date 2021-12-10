@@ -5,16 +5,19 @@ import {
   WebhookController,
 } from "@zenvia/sdk";
 import { AbstractContent } from "@zenvia/sdk/dist/lib/contents/abstract-content";
+import createFile from "../factories/file-content-factory";
+import createText from "../factories/text-content-factory";
 import { WebMessageEvent } from "../types/message-event";
 import recognizeMusic from "./audio-controller";
 
-async function createWebHook(channel: IChannel) {
+async function createWebHook(channel: IChannel, channelType: any) {
+
   return new WebhookController({
-    channel: "whatsapp",
+    channel: channelType,
 
     messageEventHandler: async (messageEvent: WebMessageEvent) => {
       let content: AbstractContent[] = [
-        new TextContent(
+        createText(
           "Olá! Bem-vindo(a) ao seu Bot para descobrir músicas novas."
         ),
       ];
@@ -29,25 +32,29 @@ async function createWebHook(channel: IChannel) {
 
         if (music) {
           let text = "";
-          if (music.artist) {
-            text = `${text}Artista: *${music.artist}*\n`;
-          }
           if (music.title) {
-            text = `${text}Título: *${music.title}*\n`;
+            text = `${text}*Título* ⇒ ${music.title}\n`;
+          }
+          if (music.artist) {
+            text = `${text}*Artista* ⇒ ${music.artist}\n\n`;
           }
           if (music.album) {
-            text = `${text}Álbum: *${music.album}*\n`;
+            text = `${text}*Álbum* ⇒ ${music.album}\n`;
           }
-          content = [new TextContent(text)];
-          if (music.deezer && music.deezer.picture) {
-            content.push(new FileContent(music.deezer.picture, "image/jpeg"));
+          if (music.song_link) {
+            text = `${text}*Clique para ouvir* ⇒ ${music.song_link}`
           }
-          if (music.deezer && music.deezer.preview) {
-            content.push(new FileContent(music.deezer.preview, "audio/mpeg"));
+          content = [createText(text)];
+          // if (music.spotify && music.spotify.picture) {
+          //   content.push(createFile(music.spotify.picture, "image/jpeg"));
+          // }
+          if (music.spotify && music.spotify.preview) {
+            content.push(createText("Caso queria ouvir um pouquinho:"));
+            content.push(createFile(music.spotify.preview, "audio/mpeg"));
           }
         } else {
           content = [
-            new TextContent("Não foi possível identificar a música do áudio."),
+            createText("Não foi possível reconhecer a música no seu áudio 😞"),
           ];
         }
       }
@@ -63,6 +70,7 @@ async function createWebHook(channel: IChannel) {
         });
     },
   });
+
 }
 
 export default createWebHook;
