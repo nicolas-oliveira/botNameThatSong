@@ -2,7 +2,6 @@ import axios from "axios";
 import { SongResponse } from "../types/song";
 
 async function recognizeMusic(url: string) {
-
   const body = {
     api_token: process.env.AUDD_TOKEN,
     return: "spotify",

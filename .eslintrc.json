@@ -19,6 +19,7 @@
     "rules": {
         "prettier/prettier": ["error", {"singleQuote": true, "parser": "flow"}],
         "no-unused-vars": "warn",
+        "unused-imports/no-unused-imports": "warn",
         "no-console": 1,
         "func-names": "off",
         "no-process-exit": "off",
