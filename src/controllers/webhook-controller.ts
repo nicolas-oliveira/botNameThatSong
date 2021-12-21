@@ -10,10 +10,11 @@ import createText from "../factories/text-content-factory";
 import { WebMessageEvent } from "../types/message-event";
 import recognizeMusic from "./audio-controller";
 import transcript from "./gcp-controller";
-import search from "./genius-controller";
+import searchGenius from "./genius-controller";
 
 async function createWebHook(channel: IChannel, channelType: any) {
   try {
+
     return new WebhookController({
       channel: channelType,
 
@@ -49,31 +50,34 @@ async function createWebHook(channel: IChannel, channelType: any) {
               text = `${text}*Clique para ouvir* ⇒ ${music.song_link}`
             }
             content = [createText(text)];
+            // Imagem de Capa
             // if (music.spotify && music.spotify.picture) {
             //   content.push(createFile(music.spotify.picture, "image/jpeg"));
             // }
+
+            // Caso a música tenha um preview no spotify:
             if (music.spotify && music.spotify.preview) {
               content.push(createText("Caso queria ouvir um pouquinho:"));
               content.push(createFile(music.spotify.preview, "audio/mpeg"));
             }
           } else {
-            const transcriptResult: string[] = await transcript(audioUrl) as string[];
+            const transcriptResult: string[] = await transcript(audioUrl) as string[]; // Google
             console.log(transcriptResult.join(','));
             if (transcriptResult) {
-              const searchGenius: any = await search(transcriptResult[0]);
-              if (searchGenius) {
+              const geniusSearchResult: any = await searchGenius(transcriptResult[0]);
+              if (geniusSearchResult) {
                 let text = "";
-                if (searchGenius.response.hits.length > 1) {
+                if (geniusSearchResult.response.hits.length > 1) {
                   text = "Possíveis músicas relacionadas: \n"
                   let rank = 1;
-                  for (const hit of searchGenius.response.hits.splice(0, 5)) {
+                  for (const hit of geniusSearchResult.response.hits.splice(0, 5)) {
                     text += `[${rank}] *Título* ⇒ ${hit.result.title}\n`;
                     text += `[${rank}] *Artista* ⇒ ${hit.result.artist_names}\n\n`;
                     rank++;
                   }
                 } else {
-                  text = `${text}*Título* ⇒ ${searchGenius.response.hits[0].result.title}\n`;
-                  text = `${text}*Artista* ⇒ ${searchGenius.response.hits[0].result.artist_names}\n\n`;
+                  text = `${text}*Título* ⇒ ${geniusSearchResult.response.hits[0].result.title}\n`;
+                  text = `${text}*Artista* ⇒ ${geniusSearchResult.response.hits[0].result.artist_names}\n\n`;
                 }
                 //text = `${text}*Álbum* ⇒ ${music.album}\n`;
                 content = [createText(text)];
@@ -89,6 +93,7 @@ async function createWebHook(channel: IChannel, channelType: any) {
         } else {
           // TODO: Search by lyrics
         }
+
         if (content.length !== 0) {
           channel
             .sendMessage(
@@ -102,6 +107,7 @@ async function createWebHook(channel: IChannel, channelType: any) {
               console.log(error)
             });
         }
+
       },
     });
   } catch (error) {

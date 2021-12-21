@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-async function search(query: string) {
+async function searchGenius(query: string) {
 
     let config = {
         headers: {
@@ -18,4 +18,4 @@ async function search(query: string) {
 
 }
 
-export default search;
+export default searchGenius;

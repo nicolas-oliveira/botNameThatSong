@@ -1,8 +1,12 @@
-import speech, { protos } from '@google-cloud/speech';
+import { protos, v1p1beta1 as speech } from '@google-cloud/speech';
+import { google } from '@google-cloud/speech/build/protos/protos';
 import getAndEncode from '../utils/base64-download';
 
-// Creates a client
-type IRecognitionConfig = protos.google.cloud.speech.v1.IRecognitionConfig
+
+// Init Types
+type SpeechRequest = protos.google.cloud.speech.v1p1beta1.ILongRunningRecognizeRequest;
+type RecognitionConfig = google.cloud.speech.v1p1beta1.IRecognitionConfig;
+
 
 async function transcript(url: string) {
     try {
@@ -12,29 +16,35 @@ async function transcript(url: string) {
 
         const sampleRateHertz = 48000;
         const languageCode = 'en-US';
+        const alternativeLanguageCodes = ['en-US', 'pt-BR'];
 
-        const config: IRecognitionConfig = {
-            encoding: "OGG_OPUS",
-            sampleRateHertz: sampleRateHertz,
-            languageCode: languageCode,
+        const config: RecognitionConfig = {
+            encoding: "OGG_OPUS", // Whatsapp's Encoding
+            sampleRateHertz, // Whatsapp's Sample Rate
+            languageCode, // Primary Code
+            alternativeLanguageCodes // Two languages we're using
         };
+
         const audio = {
             content: audioFile,
         };
 
-        const request = {
+        const request: SpeechRequest = {
             config: config,
             audio: audio,
         };
 
-        // Detects speech in the audio file
-        const [response] = await client.recognize(request);
+        const [operation]: any = await client.longRunningRecognize(request);
+        const [response] = await operation.promise();
         const transcription: string[] = response.results
-            .map(result => result.alternatives[0].transcript)
+
+            .map((result: {
+                alternatives: { transcript: any; }[];
+            }) => result.alternatives[0].transcript)
+
         return transcription;
     } catch (error) {
-        console.log(error);
-        return "";
+        throw error;
     }
 }
 
