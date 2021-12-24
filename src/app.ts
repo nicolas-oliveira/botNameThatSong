@@ -1,5 +1,7 @@
 import { Client } from "@zenvia/sdk";
-import createWebHook from "./controllers/webhook-controller";
+import createWebHook from "./brokers/zenvia-broker";
+import Logger from "./logger/default-logger";
+import loadAllNodes from "./utils/node-loader";
 
 class App {
     /*
@@ -7,15 +9,18 @@ class App {
      */
 
     public async start() {
+        loadAllNodes();
         const client = new Client(process.env.ZENVIA_TOKEN);
         const channelType = process.env.CHANNEL as any;
         const channel = client.getChannel(channelType);
         const webhook = await createWebHook(channel, channelType);
+
         webhook.on("listening", () => {
-            console.info("Webhook started and is listening on port 3000");
+            Logger.info("Webhook started and is listening on port 3000");
         });
 
         webhook.init();
+
     }
 }
 

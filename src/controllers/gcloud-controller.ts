@@ -13,6 +13,7 @@ async function transcript(url: string) {
 
         const client = new speech.SpeechClient();
 
+        // TODO: FIND SAMPLE RATE AUTOMATICALLY
         const sampleRateHertz = 16000;
         const languageCode = "en-US";
         const alternativeLanguageCodes = ["en-US", "pt-BR"];

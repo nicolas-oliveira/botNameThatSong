@@ -8,9 +8,10 @@ import { AbstractContent } from "@zenvia/sdk/dist/lib/contents/abstract-content"
 import createFile from "../factories/file-content-factory";
 import createText from "../factories/text-content-factory";
 import { WebMessageEvent } from "../types/message-event";
-import recognizeMusic from "./audio-controller";
-import transcript from "./gcp-controller";
-import searchGenius from "./genius-controller";
+import recognizeMusic from "../controllers/audd-controller";
+import transcript from "../controllers/gcloud-controller";
+import searchGenius from "../controllers/genius-controller";
+import Logger from "../logger/default-logger";
 
 async function createWebHook(channel: IChannel, channelType: any) {
     try {
@@ -25,6 +26,10 @@ async function createWebHook(channel: IChannel, channelType: any) {
                 //     messageEvent.message.from,
                 //     createText("Só um segundo...")
                 //   );
+                await channel.sendMessage(
+                    messageEvent.message.to,
+                    messageEvent.message.from,
+                    createText("Só um segundo..."));
                 if (
                     messageEvent?.message?.contents[0]?.type === "file" &&
                     messageEvent?.message?.contents[0]?.fileMimeType?.includes(
@@ -34,7 +39,7 @@ async function createWebHook(channel: IChannel, channelType: any) {
                     const audioUrl = messageEvent.message.contents[0].fileUrl;
                     const music = await recognizeMusic(audioUrl);
 
-                    console.log(audioUrl);
+                    Logger.log(audioUrl);
 
                     if (music) {
                         let text = "";
@@ -70,13 +75,12 @@ async function createWebHook(channel: IChannel, channelType: any) {
                         const transcriptResult: string[] = (await transcript(
                             audioUrl,
                         )) as string[]; // Google
-                        console.log("--------------------------------");
-                        console.log(
+
+                        Logger.log("info",
                             transcriptResult.join(",")
                                 ? transcriptResult.join(",")
-                                : transcriptResult,
+                                : "No transcript",
                         );
-                        console.log("--------------------------------");
 
                         if (transcriptResult.join(",")) {
                             const geniusSearchResult: any = await searchGenius(
@@ -111,7 +115,7 @@ async function createWebHook(channel: IChannel, channelType: any) {
                                     createText(
                                         `Não entendi o que você falou, o que eu ouvi foi: ${transcriptResult.join(
                                             ",",
-                                        )} 😞`,
+                                        )}`,
                                     ),
                                 ];
                             }
@@ -135,16 +139,16 @@ async function createWebHook(channel: IChannel, channelType: any) {
                             ...content,
                         )
                         .then((response) => {
-                            console.debug("Response:", response);
+                            Logger.info("Response:", response);
                         })
                         .catch((error) => {
-                            console.log(error);
+                            Logger.error(error);
                         });
                 }
             },
         });
     } catch (error) {
-        console.log(error);
+        Logger.error(error);
     }
 }
 

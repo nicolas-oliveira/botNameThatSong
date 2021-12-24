@@ -3,6 +3,7 @@ import https from 'https';
 async function getAndEncode(url: string): Promise<string> {
     return new Promise((resolve, reject) => {
         https.get(url, (resp) => {
+
             resp.setEncoding('base64');
             let body = "";
             resp.on('data', (data) => { body += data });
