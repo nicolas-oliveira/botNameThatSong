@@ -1,7 +1,7 @@
 {
   "name": "whats-the-song",
   "version": "0.1.0",
-  "description": "",
+  "description": "A bot that is all things music",
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
