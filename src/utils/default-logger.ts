@@ -1,11 +1,11 @@
-import winston, { format, transports, Logger } from 'winston';
+import winston, { format, transports, Logger } from "winston";
 const { combine, splat, timestamp, printf } = format;
-import moment from 'moment';
+import moment from "moment";
 // Set Format Options
 
 const formatOptions = printf(({ level, message, timestamp, ...metadata }) => {
-    let msg = `${timestamp} [${level}] : ${message} `
-    return msg
+    let msg = `${timestamp} [${level}] : ${message} `;
+    return msg;
 });
 // Create Winston Logger and set config
 const Logger = winston.createLogger({
@@ -13,19 +13,16 @@ const Logger = winston.createLogger({
         format.colorize(),
         splat(),
         timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss'
+            format: "YYYY-MM-DD HH:mm:ss",
         }),
-        formatOptions
+        formatOptions,
     ),
     transports: [
         new winston.transports.Console(),
         new winston.transports.File({
-            filename: 'logs/' +
-                moment().format("YYYY-MM-DD")
-                + '.log'
-        })
-    ]
+            filename: "logs/" + moment().format("YYYY-MM-DD") + ".log",
+        }),
+    ],
 });
 
 export default Logger;
-

@@ -1,14 +1,12 @@
 import { Client } from "@zenvia/sdk";
-import { connect } from "./brain/database/mongo-connector";
-import createWebHook from "./brokers/zenvia-broker";
-import Logger from "./logger/default-logger";
+import { connect } from "./database/mongo-connector";
+import createWebHook from "./integrations/zenvia/zenvia-broker";
+import Logger from "./utils/default-logger";
 import loadAllNodes from "./utils/node-loader";
-import samira from "./zenvia/button-content";
+// import samira from "./integrations/zenvia/button-content";
 
 class App {
-
     public async start() {
-
         // Retrieves all nodes from directory "nodeflow" and instantiates them
         loadAllNodes();
 
@@ -28,7 +26,6 @@ class App {
 
         // Starts Express server
         webhook.init();
-
     }
 
     public startZenviaClient(channelType: string) {
@@ -40,7 +37,6 @@ class App {
     public async startDatabase() {
         await connect(process.env.MONGODB_URL);
     }
-
 }
 
 export default App;

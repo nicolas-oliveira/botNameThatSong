@@ -1,19 +1,24 @@
 import { IChannel } from "@zenvia/sdk";
 import { AbstractContent } from "@zenvia/sdk/dist/lib/contents/abstract-content";
+
 import WhatsappButtons from "../types/whatsapp-buttons";
-import sendButtons from "../zenvia/button-content";
+import sendButtons from "../integrations/zenvia/button-content";
 import AbstractNode from "./cortex/abstract-node";
 import { CallbackBundle } from "./cortex/callback-bundle";
 import { UserInput } from "./cortex/input-types";
-import { getUserCurrentNode, setUserCurrentNode } from "./database/databaseControllers/user-controller";
+import {
+    getUserCurrentNode,
+    setUserCurrentNode,
+} from "../database/databaseControllers/user-controller";
 import nodeEngine from "./node-engine";
 
 class ContextManager {
-
     // Get data from mongo and execute node using NodeEngine
 
-    public async handleRequest(userInput: UserInput, channel: IChannel): Promise<void> {
-
+    public async handleRequest(
+        userInput: UserInput,
+        channel: IChannel,
+    ): Promise<void> {
         const callbackBundle = this.createDependencyBundle(userInput, channel);
 
         const currentNode: number = getUserCurrentNode(userInput.getUserID());
@@ -22,27 +27,28 @@ class ContextManager {
 
         node.setCallbackBundle(callbackBundle); // Sets context
         node.run(userInput); // Runs node
-
     }
 
-    private createDependencyBundle(userInput: UserInput, channel: IChannel): CallbackBundle {
-
+    private createDependencyBundle(
+        userInput: UserInput,
+        channel: IChannel,
+    ): CallbackBundle {
         // Message Callback
         const messageCallback = (content: AbstractContent) => {
             channel.sendMessage(
                 userInput.getReceiverID(),
                 userInput.getUserID(),
-                content
+                content,
             );
-        }
+        };
 
         const buttonsCallback = async (buttons: WhatsappButtons) => {
             sendButtons(
                 userInput.getReceiverID(),
                 userInput.getUserID(),
-                buttons
+                buttons,
             );
-        }
+        };
 
         // Change Node Callback
         const changeNodeCallback = (nodeID: number) => {
@@ -71,11 +77,9 @@ class ContextManager {
             changeNodeCallback,
             setGlobalCallback,
             getGlobalCallback,
-            emitEventCallback
-        }
-
+            emitEventCallback,
+        };
     }
-
 }
 
 export default new ContextManager();

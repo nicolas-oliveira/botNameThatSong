@@ -1,18 +1,16 @@
 import createButtons from "../../factories/button-content-factory";
 import createFile from "../../factories/file-content-factory";
 import createText from "../../factories/text-content-factory";
-import Logger from "../../logger/default-logger";
+import Logger from "../../utils/default-logger";
 import NodeEngine from "../node-engine";
 import { CallbackBundle } from "./callback-bundle";
 import { UserInput } from "./input-types";
 
 export default abstract class AbstractNode {
-
     private callbackBundle: CallbackBundle;
 
     public constructor() {
-        if (this.getID() > 0)
-            NodeEngine.addNodeToRegistry(this.getID(), this);
+        if (this.getID() > 0) NodeEngine.addNodeToRegistry(this.getID(), this);
     }
 
     public abstract getID(): number;
@@ -31,7 +29,13 @@ export default abstract class AbstractNode {
         if (NodeEngine.isNodeSet(id))
             this.callbackBundle.changeNodeCallback(id);
         else
-            Logger.error("Node " + this.getID() + " is trying to go to non-existant Node " + id + "!");
+            Logger.error(
+                "Node " +
+                    this.getID() +
+                    " is trying to go to non-existant Node " +
+                    id +
+                    "!",
+            );
     }
 
     /**
@@ -46,8 +50,14 @@ export default abstract class AbstractNode {
      * Sends the user a message of text type
      * @param text - Message to be sent to the user
      */
-    public async sendButtons(message: string, buttons: string[], footer?: string): Promise<void> {
-        return this.callbackBundle.buttonsCallback(createButtons(message, buttons, footer));
+    public async sendButtons(
+        message: string,
+        buttons: string[],
+        footer?: string,
+    ): Promise<void> {
+        return this.callbackBundle.buttonsCallback(
+            createButtons(message, buttons, footer),
+        );
     }
 
     /**
@@ -55,8 +65,13 @@ export default abstract class AbstractNode {
      * @param audioUrl - Audio's URL to be sent
      * @param type - Type of audio (e.g. audio/mpeg)
      */
-    public async sendAudioMessage(audioUrl: string, type?: string): Promise<void> {
-        return this.callbackBundle.messageCallback(createFile(audioUrl, type ? type : "audio/mpeg"));
+    public async sendAudioMessage(
+        audioUrl: string,
+        type?: string,
+    ): Promise<void> {
+        return this.callbackBundle.messageCallback(
+            createFile(audioUrl, type ? type : "audio/mpeg"),
+        );
     }
 
     /**
@@ -69,9 +84,9 @@ export default abstract class AbstractNode {
     }
 
     /**
-    * Retrieves a variable's value according to its key
-    * @param key - Key of global variable
-    */
+     * Retrieves a variable's value according to its key
+     * @param key - Key of global variable
+     */
     public async getGlobal(key: string): Promise<Object> {
         return await this.callbackBundle.getGlobalCallback(key);
     }
@@ -81,7 +96,10 @@ export default abstract class AbstractNode {
      * @param eventName - Name of the event
      * @param eventDetails - Details of the event
      */
-    public async emitEvent(eventName: string, eventDetails: Object): Promise<void> {
+    public async emitEvent(
+        eventName: string,
+        eventDetails: Object,
+    ): Promise<void> {
         return this.callbackBundle.emitEventCallback(eventName, eventDetails);
     }
 
@@ -92,5 +110,4 @@ export default abstract class AbstractNode {
     public setCallbackBundle(bundle: CallbackBundle): void {
         this.callbackBundle = bundle;
     }
-
 }

@@ -5,15 +5,16 @@ import {
     WebhookController,
 } from "@zenvia/sdk";
 import { AbstractContent } from "@zenvia/sdk/dist/lib/contents/abstract-content";
-import createFile from "../factories/file-content-factory";
-import createText from "../factories/text-content-factory";
-import { WebMessageEvent } from "../types/message-event";
-import recognizeMusic from "../controllers/audd-controller";
-import transcript from "../controllers/gcloud-controller";
-import searchGenius from "../controllers/genius-controller";
-import Logger from "../logger/default-logger";
-import { InputType, UserInput } from '../brain/cortex/input-types';
-import ContextManager from "../brain/context-manager";
+
+import createFile from "../../factories/file-content-factory";
+import createText from "../../factories/text-content-factory";
+import { WebMessageEvent } from "../../types/message-event";
+import recognizeMusic from "../../controllers/audd-controller";
+import transcript from "../../controllers/gcloud-controller";
+import searchGenius from "../../controllers/genius-controller";
+import Logger from "../../utils/default-logger";
+import { InputType, UserInput } from "../../core/cortex/input-types";
+import ContextManager from "../../core/context-manager";
 
 async function createWebHook(channel: IChannel, channelType: any) {
     return new WebhookController({
@@ -26,7 +27,11 @@ async function createWebHook(channel: IChannel, channelType: any) {
             // Define message type
             try {
                 if (messageEvent?.message?.contents[0]?.type === "file") {
-                    if (messageEvent?.message?.contents[0]?.fileMimeType?.includes("audio")) {
+                    if (
+                        messageEvent?.message?.contents[0]?.fileMimeType?.includes(
+                            "audio",
+                        )
+                    ) {
                         messageType = "AUDIO";
                     } else {
                         messageType = "OTHER";
@@ -42,7 +47,9 @@ async function createWebHook(channel: IChannel, channelType: any) {
                 channel.sendMessage(
                     messageEvent.message.to,
                     messageEvent.message.from,
-                    createText("Não é possível processar seu pedido no momento. Por favor, tente mais tarde.")
+                    createText(
+                        "Não é possível processar seu pedido no momento. Por favor, tente mais tarde.",
+                    ),
                 );
             }
 
@@ -52,20 +59,23 @@ async function createWebHook(channel: IChannel, channelType: any) {
                 messageType,
                 fileUrl,
                 messageEvent.message.contents[0].text,
-                messageEvent.message.to
-            )
+                messageEvent.message.to,
+            );
 
             // Finds node and executes it
             ContextManager.handleRequest(userInput, channel)
                 .then(() => {
                     // Success
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     Logger.error(error);
                     // TODO: Reset user node
                     channel.sendMessage(
                         messageEvent.message.to,
                         messageEvent.message.from,
-                        createText("Não é possível processar seu pedido no momento. Por favor, tente mais tarde.")
+                        createText(
+                            "Não é possível processar seu pedido no momento. Por favor, tente mais tarde.",
+                        ),
                     );
                 });
 
