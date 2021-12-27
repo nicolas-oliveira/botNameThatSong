@@ -1,4 +1,5 @@
 import AbstractNode from "../brain/cortex/abstract-node";
+import { UserInput } from "../brain/cortex/input-types";
 
 
 export default class StartNode extends AbstractNode {
@@ -7,13 +8,9 @@ export default class StartNode extends AbstractNode {
         return 1;
     }
 
-    public run(input: any) {
-
-        if (input.type == "audio") {
-            this.goToNode(2);
-        } else {
-
-        }
+    public async run(input: UserInput) {
+        // Test
+        this.sendTextMessage("Hello, " + input.getText());
 
     }
 

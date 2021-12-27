@@ -1,7 +1,12 @@
+import createFile from "../../factories/file-content-factory";
+import createText from "../../factories/text-content-factory";
 import NodeEngine from "../node-engine";
+import { CallbackBundle } from "./callback-bundle";
 import { UserInput } from "./input-types";
 
 export default abstract class AbstractNode {
+
+    private callbackBundle: CallbackBundle;
 
     public constructor() {
         NodeEngine.addNodeToRegistry(this.getID(), this);
@@ -20,8 +25,7 @@ export default abstract class AbstractNode {
      * @param {number} id - ID to which the flow will jump next
      */
     public async goToNode(id: number): Promise<void> {
-        // To Implement
-        return undefined;
+        this.callbackBundle.changeNodeCallback(id);
     }
 
     /**
@@ -29,8 +33,7 @@ export default abstract class AbstractNode {
      * @param text - Message to be sent to the user
      */
     public async sendTextMessage(text: string): Promise<void> {
-        // To Implement
-        return undefined;
+        return this.callbackBundle.messageCallback(createText(text));
     }
 
     /**
@@ -39,8 +42,7 @@ export default abstract class AbstractNode {
      * @param type - Type of audio (e.g. audio/mpeg)
      */
     public async sendAudioMessage(audioUrl: string, type?: string): Promise<void> {
-        // To Implement
-        return undefined;
+        return this.callbackBundle.messageCallback(createFile(audioUrl, type ? type : "audio/mpeg"));
     }
 
     /**
@@ -49,8 +51,7 @@ export default abstract class AbstractNode {
      * @param value - Value of global variable
      */
     public async setGlobal(key: string, value: Object): Promise<void> {
-        // To Implement
-        return undefined;
+        return await this.callbackBundle.setGlobalCallback();
     }
 
     /**
@@ -58,8 +59,7 @@ export default abstract class AbstractNode {
     * @param key - Key of global variable
     */
     public async getGlobal(key: string): Promise<Object> {
-        // To Implement
-        return undefined;
+        return await this.callbackBundle.getGlobalCallback();
     }
 
     /**
@@ -68,8 +68,15 @@ export default abstract class AbstractNode {
      * @param eventDetails - Details of the event
      */
     public async emitEvent(eventName: string, eventDetails: Object): Promise<void> {
-        // To Implement
-        return undefined;
+        return this.callbackBundle.emitEventCallback();
+    }
+
+    /**
+     * Injects dependency into Node
+     * @param bundle - Callback bundle that the current Node will use
+     */
+    public setCallbackBundle(bundle: CallbackBundle): void {
+        this.callbackBundle = bundle;
     }
 
 }
