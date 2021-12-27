@@ -24,6 +24,10 @@ class NodeEngine {
         return this.map.get(id);
     }
 
+    public isNodeSet(id: number) {
+        return this.map.has(id);
+    }
+
 }
 
 export default new NodeEngine();

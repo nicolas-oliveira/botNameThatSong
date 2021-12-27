@@ -27,7 +27,7 @@ export class UserInput {
         return this.fileUrl;
     }
 
-    public getText(): string {
+    public getMessage(): string {
         return this.text;
     }
 

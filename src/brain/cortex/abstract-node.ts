@@ -1,5 +1,7 @@
+import createButtons from "../../factories/button-content-factory";
 import createFile from "../../factories/file-content-factory";
 import createText from "../../factories/text-content-factory";
+import Logger from "../../logger/default-logger";
 import NodeEngine from "../node-engine";
 import { CallbackBundle } from "./callback-bundle";
 import { UserInput } from "./input-types";
@@ -9,7 +11,8 @@ export default abstract class AbstractNode {
     private callbackBundle: CallbackBundle;
 
     public constructor() {
-        NodeEngine.addNodeToRegistry(this.getID(), this);
+        if (this.getID() > 0)
+            NodeEngine.addNodeToRegistry(this.getID(), this);
     }
 
     public abstract getID(): number;
@@ -25,7 +28,10 @@ export default abstract class AbstractNode {
      * @param {number} id - ID to which the flow will jump next
      */
     public async goToNode(id: number): Promise<void> {
-        this.callbackBundle.changeNodeCallback(id);
+        if (NodeEngine.isNodeSet(id))
+            this.callbackBundle.changeNodeCallback(id);
+        else
+            Logger.error("Node " + this.getID() + " is trying to go to non-existant Node " + id + "!");
     }
 
     /**
@@ -34,6 +40,14 @@ export default abstract class AbstractNode {
      */
     public async sendTextMessage(text: string): Promise<void> {
         return this.callbackBundle.messageCallback(createText(text));
+    }
+
+    /**
+     * Sends the user a message of text type
+     * @param text - Message to be sent to the user
+     */
+    public async sendButtons(message: string, buttons: string[], footer?: string): Promise<void> {
+        return this.callbackBundle.buttonsCallback(createButtons(message, buttons, footer));
     }
 
     /**
@@ -51,7 +65,7 @@ export default abstract class AbstractNode {
      * @param value - Value of global variable
      */
     public async setGlobal(key: string, value: Object): Promise<void> {
-        return await this.callbackBundle.setGlobalCallback();
+        return this.callbackBundle.setGlobalCallback(key, value);
     }
 
     /**
@@ -59,7 +73,7 @@ export default abstract class AbstractNode {
     * @param key - Key of global variable
     */
     public async getGlobal(key: string): Promise<Object> {
-        return await this.callbackBundle.getGlobalCallback();
+        return await this.callbackBundle.getGlobalCallback(key);
     }
 
     /**
@@ -68,7 +82,7 @@ export default abstract class AbstractNode {
      * @param eventDetails - Details of the event
      */
     public async emitEvent(eventName: string, eventDetails: Object): Promise<void> {
-        return this.callbackBundle.emitEventCallback();
+        return this.callbackBundle.emitEventCallback(eventName, eventDetails);
     }
 
     /**

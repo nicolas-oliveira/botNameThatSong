@@ -1,10 +1,12 @@
 import { IChannel } from "@zenvia/sdk";
 import { AbstractContent } from "@zenvia/sdk/dist/lib/contents/abstract-content";
-import createText from "../factories/text-content-factory";
-import StartNode from "../nodeflow/1-startnode";
+import WhatsappButtons from "../types/whatsapp-buttons";
+import sendButtons from "../zenvia/button-content";
 import AbstractNode from "./cortex/abstract-node";
 import { CallbackBundle } from "./cortex/callback-bundle";
 import { UserInput } from "./cortex/input-types";
+import { getUserCurrentNode, setUserCurrentNode } from "./database/databaseControllers/user-controller";
+import nodeEngine from "./node-engine";
 
 class ContextManager {
 
@@ -14,9 +16,11 @@ class ContextManager {
 
         const callbackBundle = this.createDependencyBundle(userInput, channel);
 
-        const node: AbstractNode = null; // TODO: FIND NODE USING MONGO
+        const currentNode: number = getUserCurrentNode(userInput.getUserID());
 
-        node.setCallbackBundle(callbackBundle);
+        const node: AbstractNode = nodeEngine.getNodeFromRegistry(currentNode);
+
+        node.setCallbackBundle(callbackBundle); // Sets context
         node.run(userInput); // Runs node
 
     }
@@ -24,27 +28,46 @@ class ContextManager {
     private createDependencyBundle(userInput: UserInput, channel: IChannel): CallbackBundle {
 
         // Message Callback
-        const messageCallback = (content: AbstractContent) =>
+        const messageCallback = (content: AbstractContent) => {
             channel.sendMessage(
                 userInput.getReceiverID(),
                 userInput.getUserID(),
                 content
             );
+        }
+
+        const buttonsCallback = async (buttons: WhatsappButtons) => {
+            sendButtons(
+                userInput.getReceiverID(),
+                userInput.getUserID(),
+                buttons
+            );
+        }
 
         // Change Node Callback
-        const changeNodeCallback = () => { };
+        const changeNodeCallback = (nodeID: number) => {
+            // Sets next node to specified ID
+            setUserCurrentNode(userInput.getUserID(), nodeID);
+        };
 
         // Set Global Callback
-        const setGlobalCallback = async () => { };
+        const setGlobalCallback = async (key: string, value: Object) => {
+            // Sets Global
+        };
 
         // Change Node Callback
-        const getGlobalCallback = async () => { };
+        const getGlobalCallback = async () => {
+            return undefined; //TODO
+        };
 
         // Change Node Callback
-        const emitEventCallback = () => { };
+        const emitEventCallback = (eventName: string, eventDetails: Object) => {
+            // EMIT EVENT
+        };
 
         return {
             messageCallback,
+            buttonsCallback,
             changeNodeCallback,
             setGlobalCallback,
             getGlobalCallback,

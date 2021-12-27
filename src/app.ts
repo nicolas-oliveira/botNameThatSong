@@ -3,6 +3,7 @@ import { connect } from "./brain/database/mongo-connector";
 import createWebHook from "./brokers/zenvia-broker";
 import Logger from "./logger/default-logger";
 import loadAllNodes from "./utils/node-loader";
+import samira from "./zenvia/button-content";
 
 class App {
 

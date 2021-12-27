@@ -61,6 +61,12 @@ async function createWebHook(channel: IChannel, channelType: any) {
                     // Success
                 }).catch((error) => {
                     Logger.error(error);
+                    // TODO: Reset user node
+                    channel.sendMessage(
+                        messageEvent.message.to,
+                        messageEvent.message.from,
+                        createText("Não é possível processar seu pedido no momento. Por favor, tente mais tarde.")
+                    );
                 });
 
             /* IGNORE:
