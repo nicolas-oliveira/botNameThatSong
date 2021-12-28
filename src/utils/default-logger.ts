@@ -4,7 +4,7 @@ import moment from "moment";
 // Set Format Options
 
 const formatOptions = printf(({ level, message, timestamp, ...metadata }) => {
-    let msg = `${timestamp} [${level}] : ${message} `;
+    let msg = `${timestamp} [${level}]: ${message} `;
     return msg;
 });
 // Create Winston Logger and set config

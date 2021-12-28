@@ -1,4 +1,4 @@
-import mongoose, { Mongoose } from "mongoose";
+import mongoose from "mongoose";
 import Logger from "../utils/default-logger";
 
 export async function connect(connection_string: string) {

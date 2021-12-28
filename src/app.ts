@@ -1,9 +1,12 @@
 import { Client } from "@zenvia/sdk";
-import { connect } from "./database/mongo-connector";
+
 import createWebHook from "./integrations/zenvia/zenvia-broker";
+// import samira from "./integrations/zenvia/button-content";
 import Logger from "./utils/default-logger";
 import loadAllNodes from "./utils/node-loader";
-// import samira from "./integrations/zenvia/button-content";
+
+import { connect } from "./database/mongo-connector";
+import userSchema from "./database/models/user-model";
 
 class App {
     public async start() {

@@ -1,18 +1,17 @@
 import { model, Schema } from "mongoose";
 
-interface UserModel {
-
-
-
-}
+interface UserModel {}
 
 const userSchema = new Schema(
     {
-
+        userID: String,
+        lastInteraction: { type: Date, default: Date.now },
+        lastNode: Number,
+        global: Object,
     },
     {
-        timestamps: true
-    }
+        timestamps: true,
+    },
 );
 
-export default model<UserModel>('User', userSchema);
+export default model<UserModel>("User", userSchema);

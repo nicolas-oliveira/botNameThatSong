@@ -1,15 +1,7 @@
 import { model, Schema } from "mongoose";
 
-interface EventModel {
+interface EventModel {}
 
+const eventSchema = new Schema({});
 
-
-}
-
-const eventSchema = new Schema(
-    {
-
-    }
-);
-
-export default model<EventModel>('User', eventSchema);
+export default model<EventModel>("User", eventSchema);
