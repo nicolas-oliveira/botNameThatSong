@@ -21,7 +21,9 @@ class ContextManager {
     ): Promise<void> {
         const callbackBundle = this.createDependencyBundle(userInput, channel);
 
-        const currentNode: number = getUserCurrentNode(userInput.getUserID());
+        const currentNode: any = await getUserCurrentNode(
+            userInput.getUserID(),
+        );
 
         const node: AbstractNode = nodeEngine.getNodeFromRegistry(currentNode);
 

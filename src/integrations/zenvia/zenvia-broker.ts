@@ -1,22 +1,22 @@
 import {
-    FileContent,
+    // FileContent,
     IChannel,
-    TextContent,
+    // TextContent,
     WebhookController,
 } from "@zenvia/sdk";
-import { AbstractContent } from "@zenvia/sdk/dist/lib/contents/abstract-content";
+// import { AbstractContent } from "@zenvia/sdk/dist/lib/contents/abstract-content";
 
-import createFile from "../../factories/file-content-factory";
 import createText from "../../factories/text-content-factory";
 import { WebMessageEvent } from "../../types/message-event";
-import recognizeMusic from "../../controllers/audd-controller";
-import transcript from "../../controllers/gcloud-controller";
-import searchGenius from "../../controllers/genius-controller";
 import Logger from "../../utils/default-logger";
 import { InputType, UserInput } from "../../core/cortex/input-types";
 import ContextManager from "../../core/context-manager";
+// import createFile from "../../factories/file-content-factory";
+// import recognizeMusic from "../../controllers/audd-controller";
+// import transcript from "../../controllers/gcloud-controller";
+// import searchGenius from "../../controllers/genius-controller";
 
-async function createWebHook(channel: IChannel, channelType: any) {
+async function createWebhook(channel: IChannel, channelType: any) {
     return new WebhookController({
         channel: channelType,
 
@@ -61,6 +61,10 @@ async function createWebHook(channel: IChannel, channelType: any) {
                 messageEvent.message.contents[0].text,
                 messageEvent.message.to,
             );
+
+            console.log("zenvia-broker.ts, line 66 ---------------");
+            console.log({ userInput, typeof: typeof userInput });
+            console.log("-----------------------------------------");
 
             // Finds node and executes it
             ContextManager.handleRequest(userInput, channel)
@@ -211,4 +215,4 @@ async function createWebHook(channel: IChannel, channelType: any) {
     });
 }
 
-export default createWebHook;
+export default createWebhook;

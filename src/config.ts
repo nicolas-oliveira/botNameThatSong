@@ -1,8 +1,5 @@
-
 class Config {
-
-    DEBUG: boolean
-
-};
+    DEBUG: boolean;
+}
 
 export default new Config();
