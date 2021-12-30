@@ -8,10 +8,16 @@ export default class HelloNode extends AbstractNode {
     }
 
     public async run(input: UserInput): Promise<void> {
-        this.sendButtons("O que você deseja fazer?", [
-            "Ver letra",
-            "Tocar preview",
-            "Terceira opcao",
-        ]);
+        if (input.getMessage()?.toLocaleLowerCase() === "testar globais") {
+            this.sendTextMessage("Ok, agora você pode testar variáveis de contexto");
+            this.sendTextMessage("Utilize 'checarglobal', logo em seguida 'setarglobal' e depois 'checarglobal' de novo");
+            this.goToNode(15);
+        } else {
+            this.sendButtons("O que você deseja fazer?", [
+                "Testar globais",
+                "Converter música",
+                "Terceira opcao qualquer",
+            ]);
+        }
     }
 }

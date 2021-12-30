@@ -31,10 +31,10 @@ export default abstract class AbstractNode {
         else
             Logger.error(
                 "Node " +
-                    this.getID() +
-                    " is trying to go to non-existant Node " +
-                    id +
-                    "!",
+                this.getID() +
+                " is trying to go to non-existant Node " +
+                id +
+                "!",
             );
     }
 

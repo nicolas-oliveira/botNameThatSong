@@ -7,10 +7,14 @@ import AbstractNode from "./cortex/abstract-node";
 import { CallbackBundle } from "./cortex/callback-bundle";
 import { UserInput } from "./cortex/input-types";
 import {
-    getUserCurrentNode,
+    getGlobal,
+    getUserInfo,
+    setGlobal,
     setUserCurrentNode,
 } from "../database/databaseControllers/user-controller";
 import nodeEngine from "./node-engine";
+import moment from "moment";
+import NodeRuntimeError from "../errors/node-runtime-error";
 
 class ContextManager {
     // Get data from mongo and execute node using NodeEngine
@@ -21,12 +25,31 @@ class ContextManager {
     ): Promise<void> {
         const callbackBundle = this.createDependencyBundle(userInput, channel);
 
-        const currentNode: number = getUserCurrentNode(userInput.getUserID());
+        const info = await getUserInfo(userInput.getUserID());
 
-        const node: AbstractNode = nodeEngine.getNodeFromRegistry(currentNode);
+        const lastInteraction: Date = info.lastInteraction;
+
+        // Gets which node to go to
+        let currentNode: number = info.lastNode as number;
+
+        // If it's been more than 5 seconds, restart interaction
+        if (moment.now() - lastInteraction.getTime() > 1000 * 60 * 1) {
+            // Resets
+            currentNode = 1;
+        }
+
+        // In case the node has been deleted, resets flow.
+        if (!nodeEngine.isNodeSet(currentNode))
+            currentNode = 1;
+
+        let node: AbstractNode = nodeEngine.getNodeFromRegistry(currentNode);
 
         node.setCallbackBundle(callbackBundle); // Sets context
-        node.run(userInput); // Runs node
+        try {
+            node.run(userInput); // Runs node
+        } catch (error) {
+            throw new NodeRuntimeError("Error while running node " + currentNode);
+        }
     }
 
     private createDependencyBundle(
@@ -58,12 +81,12 @@ class ContextManager {
 
         // Set Global Callback
         const setGlobalCallback = async (key: string, value: Object) => {
-            // Sets Global
+            return await setGlobal(userInput.getUserID(), key, value);
         };
 
         // Change Node Callback
-        const getGlobalCallback = async () => {
-            return undefined; //TODO
+        const getGlobalCallback = async (key: string) => {
+            return getGlobal(userInput.getUserID(), key);
         };
 
         // Change Node Callback

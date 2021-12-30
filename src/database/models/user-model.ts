@@ -1,13 +1,20 @@
-import { model, Schema } from "mongoose";
+import { AnyObject, model, Schema } from "mongoose";
 
-interface UserModel {}
+export interface UserModel {
+
+    userID: String;
+    lastInteraction: Date;
+    lastNode: Number;
+    globals: AnyObject;
+
+}
 
 const userSchema = new Schema(
     {
         userID: String,
-        lastInteraction: { type: Date, default: Date.now },
-        lastNode: Number,
-        global: Object,
+        lastInteraction: { type: Date, default: Date.now() },
+        lastNode: { type: Number, default: 1 },
+        globals: Object,
     },
     {
         timestamps: true,

@@ -1,5 +1,6 @@
 import Config from "../config";
 import DuplicatedNodeException from "../errors/duplicated-node-error";
+import NoSuchNodeError from "../errors/no-such-node-error";
 import Logger from "../utils/default-logger";
 import AbstractNode from "./cortex/abstract-node";
 
@@ -22,7 +23,10 @@ class NodeEngine {
     }
 
     public getNodeFromRegistry(id: number): AbstractNode {
-        return this.map.get(id);
+        if (this.isNodeSet(id)) {
+            return this.map.get(id);
+        }
+        throw new NoSuchNodeError(`Node with ID ${id} does not exist.`);
     }
 
     public isNodeSet(id: number) {
