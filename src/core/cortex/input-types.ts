@@ -38,6 +38,10 @@ export class UserInput {
     public getReceiverID(): string {
         return this.receiverID;
     }
+
+    public isAudio(): boolean {
+        return this.fileUrl !== undefined && this.type === "AUDIO";
+    }
 }
 
 export type InputType = "AUDIO" | "TEXT" | "OTHER";

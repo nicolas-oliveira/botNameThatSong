@@ -17,6 +17,7 @@ export default class MenuDetalhesNode extends AbstractNode {
                 "2 - Tocar preview",
                 "3 - Terceira opcao",
             ]);
+            this.goToNode(4);
         } else {
             this.sendTextMessage("Não entendi :/");
         }

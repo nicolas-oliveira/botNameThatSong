@@ -3,7 +3,7 @@ import { UserInput } from "../core/cortex/input-types";
 
 export default class MenuDetalhesNode extends AbstractNode {
     public getID(): number {
-        return 4;
+        return 5;
     }
 
     public async run(input: UserInput): Promise<void> {

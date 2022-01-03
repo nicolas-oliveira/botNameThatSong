@@ -8,9 +8,19 @@ export default class Hello extends AbstractNode {
     }
 
     public async run(input: UserInput): Promise<void> {
-        this.sendTextMessage("Olá sou o bot");
-        this.sendTextMessage(
-            "Você pode pedir para que eu identifique diversas músicas de algumas formas diferentes, como mandando áudio com um pedaço da música, cantando ou falando e até escrevendo uma parte da letra. Vamos lá!?",
-        );
+        if (input.isAudio()) {
+            this.sendTextMessage("É um audio galera, gg easy");
+
+            this.goToNode(2);
+        } else {
+            this.sendTextMessage("Olá, sou o NameThatSong");
+            this.sendTextMessage(
+                "Você pode pedir para que eu identifique diversas músicas de algumas formas diferentes, como mandando áudio com um pedaço da música, cantando ou falando e até escrevendo uma parte da letra. Vamos lá!?",
+            );
+            this.sendTextMessage(
+                "Utilize 'checarglobal', logo em seguida 'setarglobal' e depois 'checarglobal' de novo",
+            );
+            this.goToNode(15);
+        }
     }
 }
