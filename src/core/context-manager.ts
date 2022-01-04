@@ -58,12 +58,15 @@ class ContextManager {
         channel: IChannel,
     ): CallbackBundle {
         // Message Callback
-        const messageCallback = (content: AbstractContent) => {
-            channel.sendMessage(
-                userInput.getReceiverID(),
-                userInput.getUserID(),
-                content,
-            );
+        const messageCallback = (content: AbstractContent): Promise<void> => {
+            return new Promise((resolve) => {
+                channel.sendMessage(
+                    userInput.getReceiverID(),
+                    userInput.getUserID(),
+                    content,
+                );
+                resolve();
+            });
         };
 
         const buttonsCallback = async (buttons: WhatsappButtons) => {

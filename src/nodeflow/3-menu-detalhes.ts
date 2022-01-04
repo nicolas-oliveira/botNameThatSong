@@ -7,19 +7,12 @@ export default class MenuDetalhesNode extends AbstractNode {
     }
 
     public async run(input: UserInput): Promise<void> {
-        if (input.getMessage().includes("letra")) {
-            this.sendTextMessage(
+        if (input) {
+            this.sendButtons(
                 "Você pode ver algumas coisas sobre a sua música:",
+                ["1 - Ver letra", "2 - Ver o preview da música", "3 - Sair"],
             );
-
-            this.sendButtons("", [
-                "1 - Ver letra",
-                "2 - Tocar preview",
-                "3 - Terceira opcao",
-            ]);
-            this.goToNode(4);
-        } else {
-            this.sendTextMessage("Não entendi :/");
+            this.setNextInteractionNode(4);
         }
     }
 }

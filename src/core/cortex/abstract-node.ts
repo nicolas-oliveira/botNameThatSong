@@ -1,7 +1,9 @@
+import NodeRuntimeError from "../../errors/node-runtime-error";
 import createButtons from "../../factories/button-content-factory";
 import createFile from "../../factories/file-content-factory";
 import createText from "../../factories/text-content-factory";
 import Logger from "../../utils/default-logger";
+import nodeEngine from "../node-engine";
 import NodeEngine from "../node-engine";
 import { CallbackBundle } from "./callback-bundle";
 import { UserInput } from "./input-types";
@@ -25,17 +27,28 @@ export default abstract class AbstractNode {
      * This function will tell context manager which flow it should go to next
      * @param {number} id - ID to which the flow will jump next
      */
-    public async goToNode(id: number): Promise<void> {
+    public async setNextInteractionNode(id: number): Promise<void> {
         if (NodeEngine.isNodeSet(id))
             this.callbackBundle.changeNodeCallback(id);
         else
             Logger.error(
                 "Node " +
-                this.getID() +
-                " is trying to go to non-existant Node " +
-                id +
-                "!",
+                    this.getID() +
+                    " is trying to go to non-existant Node " +
+                    id +
+                    "!",
             );
+    }
+
+    public async runNode(nodeID: number, userInput: UserInput): Promise<void> {
+        let node: AbstractNode = nodeEngine.getNodeFromRegistry(nodeID);
+
+        node.setCallbackBundle(this.callbackBundle); // Sets context
+        try {
+            node.run(userInput); // Runs node
+        } catch (error) {
+            throw new NodeRuntimeError("Error while running node " + nodeID);
+        }
     }
 
     /**
@@ -43,7 +56,7 @@ export default abstract class AbstractNode {
      * @param text - Message to be sent to the user
      */
     public async sendTextMessage(text: string): Promise<void> {
-        return this.callbackBundle.messageCallback(createText(text));
+        return await this.callbackBundle.messageCallback(createText(text));
     }
 
     /**

@@ -12,7 +12,7 @@ Find out more here: https://en.wikipedia.org/wiki/Dependency_injection
 import { AbstractContent } from "@zenvia/sdk/dist/lib/contents/abstract-content";
 import WhatsappButtons from "../../types/whatsapp-buttons";
 
-type MessageCallback = (content: AbstractContent) => void;
+type MessageCallback = (content: AbstractContent) => Promise<void>;
 type ButtonsCallback = (buttons: WhatsappButtons) => Promise<void>;
 type ChangeNodeCallback = (nodeID: number) => void;
 type SetGlobalCallback = (key: string, value: Object) => void;

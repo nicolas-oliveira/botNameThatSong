@@ -9,9 +9,9 @@ export default class Hello extends AbstractNode {
 
     public async run(input: UserInput): Promise<void> {
         if (input.isAudio()) {
-            this.sendTextMessage("É um audio galera, gg easy");
+            this.sendTextMessage("Estou ouvindo seu áudio...");
 
-            this.goToNode(2);
+            this.runNode(2, input);
         } else {
             this.sendTextMessage("Olá, sou o NameThatSong");
             this.sendTextMessage(
@@ -20,7 +20,7 @@ export default class Hello extends AbstractNode {
             this.sendTextMessage(
                 "Utilize 'checarglobal', logo em seguida 'setarglobal' e depois 'checarglobal' de novo",
             );
-            this.goToNode(15);
+            this.runNode(15, input);
         }
     }
 }
