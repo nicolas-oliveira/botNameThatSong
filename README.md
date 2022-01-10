@@ -174,7 +174,7 @@ export default class Teste extends AbstractNode {
         this.setGlobals({"idade": 25});
         this.setGlobals({"nome": "Marcela"},{"hobby": "vôlei"});
 
-        this.getGlobals("hobby");
+        this.getGlobals("hobby"); // Retorno: "vôlei"
         this.getGlobals("idade", "nome"); // Retorno: {idade: 25, nome: "Marcela"}
 
         // Na próxima vez que o usuário interagir, ele será mandado para este nó
