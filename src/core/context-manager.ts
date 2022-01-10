@@ -18,6 +18,8 @@ import NodeRuntimeError from "../errors/node-runtime-error";
 import Logger from "../utils/default-logger";
 import ApiError from "../errors/api-error";
 import config from "../config";
+import WhatsappList from "../types/whatsapp-list";
+import sendList from "../integrations/zenvia/list-content";
 
 class ContextManager {
     // Get data from mongo and execute node using NodeEngine
@@ -99,6 +101,14 @@ class ContextManager {
             );
         };
 
+        const listCallback = async (list: WhatsappList) => {
+            await sendList(
+                userInput.getReceiverID(),
+                userInput.getUserID(),
+                list
+            );
+        };
+
         // Change Node Callback
         const changeNodeCallback = (nodeID: number) => {
             // Sets next node to specified ID
@@ -125,6 +135,7 @@ class ContextManager {
         return {
             messageCallback,
             buttonsCallback,
+            listCallback,
             changeNodeCallback,
             setGlobalsCallback,
             getGlobalsCallback,
