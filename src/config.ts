@@ -10,7 +10,9 @@ const config = {
     // Minimum audio size to search in bytes
     MINIMUM_AUDIO_FILE_SIZE: 12200,
     // Maximum results to return from Genius
-    MAX_GENIUS_RESULTS: 6
+    MAX_GENIUS_RESULTS: 6,
+    // Audio Sample Rate for Google Cloud
+    AUDIO_SAMPLE_RATE: 16000
 }
 
 export default config;

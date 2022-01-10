@@ -1,7 +1,7 @@
 import { protos, v1p1beta1 as speech } from "@google-cloud/speech";
 import { google } from "@google-cloud/speech/build/protos/protos";
 import ApiError from "../errors/api-error";
-import getAndEncode from "../utils/base64-download";
+import botConfig from '../config';
 
 // Init Types
 type SpeechRequest =
@@ -14,7 +14,7 @@ async function transcript(audioFile: string) {
         const client = new speech.SpeechClient();
 
         // TODO: FIND SAMPLE RATE AUTOMATICALLY
-        const sampleRateHertz = 16000;
+        const sampleRateHertz = botConfig.AUDIO_SAMPLE_RATE;
         const languageCode = "en-US";
         const alternativeLanguageCodes = ["en-US", "pt-BR"];
 
