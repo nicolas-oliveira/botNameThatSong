@@ -157,5 +157,5 @@ export default class Teste extends AbstractNode {
 
 **Árvore Inicial do Bot**
 
-Árvore de desenvolvimento utilizada como referência
+Árvore de desenvolvimento utilizada como referência para o desenvolvimento do fluxo
 ![Fluxo](https://i.imgur.com/zjfdgBU.png)
