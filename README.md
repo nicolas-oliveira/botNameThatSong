@@ -6,6 +6,8 @@
 - [Orquestrador](#orquestrador)
 - [Instalação e Execução](#instalação-e-execução)
 - [Variáveis de Ambiente](#variáveis-de-ambiente)
+- [Logs](#logs)
+- [Configuração](#config)
 - [Documentação para Devs](#node-docs)
 - [Equipe](#squad-ômega)
 - [Extra](#extra)
@@ -100,12 +102,35 @@ Para o Bot funcionar, é necessário as chaves:
 
 `GOOGLE_APPLICATION_CREDENTIALS=Credenciais baixadas da plataforma do Google (default: gcp_credentials.json)`
 
-`GENIUS_TOKEN=Credenciais da API da Genius`
+`GENIUS_TOKEN=Credenciais da API do Genius`
 
 `MONGODB_URL=Url de Conexão do MongoDB`
 
 `CHANNEL=whatsapp`
 
+## Logs
+
+O Bot mantém logs separados pelo dia atual, por exemplo:
+
+![Exemplo Logs](https://i.imgur.com/7kJDsRz.png)
+
+## Config
+
+Esta configuração altera valores importantes no Bot. Caso esteja em prod, a configuração estará em "build/config.js", caso contrário, em "src/config.ts".
+
+    DEBUG <- Se o Bot está em modo Debug
+
+    RESET_TIME <- Quanto tempo deve passar desde a última interação para o Bot reiniciar a interação do usuário
+
+    MINIMUM_SEARCH_LENGTH <- Mínimo de caracteres necessários para o Bot considerar como pesquisa por letra da música
+    
+    MAXIMUM_SEARCH_LENGTH <- Máximo número de caracteres em pesquisa por letra da música
+
+    MINIMUM_AUDIO_FILE_SIZE <- Tamanho mínimo de arquivo de áudio
+
+    MAX_GENIUS_RESULTS <- Quantos resultados devem retornar pro usuário
+
+    AUDIO_SAMPLE_RATE <- Sample Rate do Áudio dos usuários (Isso será alterado no futuro)
 
 ## Node Docs
 
