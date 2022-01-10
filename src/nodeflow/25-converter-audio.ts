@@ -33,7 +33,7 @@ export default class Hello extends AbstractNode {
             if (geniusSearch.hits && geniusSearch.hits.length !== 0) {
                 await this.sendTextMessage(
                     "Aqui está uma lista de músicas possivelmente relacionadas",
-                    ...makeListFromGenius(geniusSearch),
+                    makeListFromGenius(geniusSearch),
                 );
             } else {
                 await this.sendTextMessage(
