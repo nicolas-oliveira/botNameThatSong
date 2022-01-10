@@ -9,7 +9,9 @@ export default class Hello extends AbstractNode {
     }
 
     public async run(input: UserInput, music): Promise<void> {
-        await this.sendTextMessage("Estou lembrando a letra dessa música, só um segundo... 🤔🤨🧐");
+        await this.sendTextMessage(
+            "Estou lembrando a letra dessa música, só um segundo... 🤔🤨🧐",
+        );
         // Retrives page
         const page = await getGeniusPage(music.title, music.artist);
         if (!page) {
@@ -23,15 +25,15 @@ export default class Hello extends AbstractNode {
         }
 
         // Shows lyrics
-        await this.sendTextMessage(
-            "Lembrei!",
-            lyrics);
+        await this.sendTextMessage("Lembrei!", lyrics);
 
         // Sends buttons again after two seconds
-        setTimeout(() => this.sendButtons("Mais alguma coisa?",
-            ["Ouvir um pedacinho", "Tentar outra música", "Por enquanto é só"]), 2000);
+        await this.sendButtons("Mais alguma coisa?", [
+            "Ouvir um pedacinho",
+            "Tentar outra música",
+            "Por enquanto é só",
+        ]);
         // Go to Node 22, where it checks what the user wants to do again
         this.setNextInteractionNode(22);
     }
-
 }
