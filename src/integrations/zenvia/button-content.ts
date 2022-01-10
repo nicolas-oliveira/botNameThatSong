@@ -1,7 +1,7 @@
 import axios from "axios";
 import WhatsappButtons from "../../types/whatsapp-buttons";
 
-export default function sendButtons(from: string, to: string, buttons: WhatsappButtons) {
+export default async function sendButtons(from: string, to: string, buttons: WhatsappButtons) {
     const config = {
         headers: {
             'Content-Type': 'application/json',

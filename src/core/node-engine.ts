@@ -13,7 +13,7 @@ class NodeEngine {
     public addNodeToRegistry(id: number, node: AbstractNode) {
         if (this.map.has(id)) {
             throw new DuplicatedNodeException(
-                `A Node with the ID ${id} has already been registed before`,
+                `A Node with the ID ${id} has already been registed`,
             );
         }
         this.map.set(id, node);

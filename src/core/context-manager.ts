@@ -1,4 +1,4 @@
-import { IChannel } from "@zenvia/sdk";
+import { IChannel, IMessage } from "@zenvia/sdk";
 import { AbstractContent } from "@zenvia/sdk/dist/lib/contents/abstract-content";
 
 import WhatsappButtons from "../types/whatsapp-buttons";
@@ -7,14 +7,17 @@ import AbstractNode from "./cortex/abstract-node";
 import { CallbackBundle } from "./cortex/callback-bundle";
 import { UserInput } from "./cortex/input-types";
 import {
-    getGlobal,
+    getGlobals,
     getUserInfo,
-    setGlobal,
+    setGlobals,
     setUserCurrentNode,
 } from "../database/databaseControllers/user-controller";
 import nodeEngine from "./node-engine";
 import moment from "moment";
 import NodeRuntimeError from "../errors/node-runtime-error";
+import Logger from "../utils/default-logger";
+import ApiError from "../errors/api-error";
+import config from "../config";
 
 class ContextManager {
     // Get data from mongo and execute node using NodeEngine
@@ -23,6 +26,7 @@ class ContextManager {
         userInput: UserInput,
         channel: IChannel,
     ): Promise<void> {
+
         const callbackBundle = this.createDependencyBundle(userInput, channel);
 
         const info = await getUserInfo(userInput.getUserID());
@@ -32,8 +36,8 @@ class ContextManager {
         // Gets which node to go to
         let currentNode: number = info.lastNode as number;
 
-        // If it's been more than 5 seconds, restart interaction
-        if (moment.now() - lastInteraction.getTime() > 1000 * 60 * 1) {
+        // If it's been more than 15 seconds, restart interaction
+        if (moment.now() - lastInteraction.getTime() > 1000 * 60 * config.RESET_TIME) {
             // Resets
             currentNode = 1;
         }
@@ -45,32 +49,50 @@ class ContextManager {
 
         node.setCallbackBundle(callbackBundle); // Sets context
         try {
-            node.run(userInput); // Runs node
+            await node.run(userInput); // Runs node
         } catch (error) {
-            throw new NodeRuntimeError(
-                "Error while running node " + currentNode,
-            );
+            if (error instanceof ApiError) {
+
+                try {
+                    // Handle Error Gracefully
+                    await node.sendTextMessage(...(await this.handleApiError(userInput)));
+                } catch (error) {
+                    Logger.error("There was an error running Node " + currentNode + "." +
+                        "\n" + error);
+                }
+
+            }
+            else {
+                Logger.error("There was an error running Node " + currentNode + "." +
+                    "\n" + error);
+            }
         }
     }
 
+    // Functions that will be injected so the Node can have context to interact with the User
     private createDependencyBundle(
         userInput: UserInput,
         channel: IChannel,
     ): CallbackBundle {
         // Message Callback
-        const messageCallback = (content: AbstractContent): Promise<void> => {
-            return new Promise((resolve) => {
-                channel.sendMessage(
+        const messageCallback = async (...contents: AbstractContent[]): Promise<IMessage> => {
+            try {
+                const message = await channel.sendMessage(
                     userInput.getReceiverID(),
                     userInput.getUserID(),
-                    content,
+                    ...contents
                 );
-                resolve();
-            });
+                return message;
+            } catch (error) {
+                if (config.DEBUG)
+                    Logger.error("Error while trying to send message to user " + userInput.getUserID());
+                else
+                    throw new NodeRuntimeError("Error on sending message to user " + userInput.getUserID())
+            }
         };
 
         const buttonsCallback = async (buttons: WhatsappButtons) => {
-            sendButtons(
+            await sendButtons(
                 userInput.getReceiverID(),
                 userInput.getUserID(),
                 buttons,
@@ -84,13 +106,13 @@ class ContextManager {
         };
 
         // Set Global Callback
-        const setGlobalCallback = async (key: string, value: Object) => {
-            return await setGlobal(userInput.getUserID(), key, value);
+        const setGlobalsCallback = async (...pairs: Record<string, any>[]) => {
+            return await setGlobals(userInput.getUserID(), ...pairs);
         };
 
         // Change Node Callback
-        const getGlobalCallback = async (key: string) => {
-            return getGlobal(userInput.getUserID(), key);
+        const getGlobalsCallback = async (...keys: string[]) => {
+            return await getGlobals(userInput.getUserID(), ...keys);
         };
 
         // Change Node Callback
@@ -98,15 +120,39 @@ class ContextManager {
             // EMIT EVENT
         };
 
+        // Test Globals
+
         return {
             messageCallback,
             buttonsCallback,
             changeNodeCallback,
-            setGlobalCallback,
-            getGlobalCallback,
+            setGlobalsCallback,
+            getGlobalsCallback,
             emitEventCallback,
         };
     }
+
+    public async handleApiError(userInput: UserInput): Promise<string[]> {
+        const globalCount = await getGlobals(userInput.getUserID(), "apiErrorCount");
+        if (globalCount) {
+            let errorCount: number = globalCount as number;
+            if (errorCount == 0) {
+                await setGlobals(userInput.getUserID(), { "apiErrorCount": errorCount + 1 })
+                return ["Parece que houve um erro aqui 😕", "Vamos tentar de novo:"];
+            }
+            if (errorCount == 1) {
+                await setGlobals(userInput.getUserID(), { "apiErrorCount": errorCount + 1 })
+                return ["Desculpa, não estou conseguindo fazer essa ação 😞", "Vamos tentar a última vez..."];
+            }
+            await setGlobals(userInput.getUserID(), { "apiErrorCount": 0 })
+            await setUserCurrentNode(userInput.getUserID(), 1);
+            return ["Parece que estou passando por problemas no momento 🤕", "Tente novamente um pouco mais tarde"];
+        } else {
+            await setGlobals(userInput.getUserID(), { "apiErrorCount": 1 })
+            return ["Parece que houve um erro aqui 😕", "Vamos tentar de novo:"];
+        }
+    }
+
 }
 
 export default new ContextManager();

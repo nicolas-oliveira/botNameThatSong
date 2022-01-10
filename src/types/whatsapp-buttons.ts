@@ -1,16 +1,19 @@
-import { v4 } from 'uuid';
+import ButtonTitleTooLong from "../errors/button-title-too-long";
 
 export default class WhatsappButtons {
 
     private body: string;
-    private buttons: object[];
+    private buttons: Object[];
     private footer: string;
 
     public constructor(message: string, buttons: string[], footer?: string) {
         this.body = message;
         this.buttons = buttons.map((buttonString) => {
+            if (buttonString.length > 20)
+                throw new ButtonTitleTooLong("The button title \"" + buttonString + "\" is too long "
+                    + "(20 chars max)")
             return {
-                id: v4() as string,
+                id: buttonString,
                 title: buttonString
             }
         });
@@ -21,7 +24,7 @@ export default class WhatsappButtons {
         return this.body;
     }
 
-    public getButtons(): object[] {
+    public getButtons(): Object[] {
         return this.buttons;
     }
 

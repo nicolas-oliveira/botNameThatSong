@@ -47,7 +47,7 @@ async function createWebhook(channel: IChannel, channelType: any) {
                 channel.sendMessage(
                     messageEvent.message.to,
                     messageEvent.message.from,
-                    createText(
+                    ...createText(
                         "Não é possível processar seu pedido no momento. Por favor, tente mais tarde.",
                     ),
                 );
@@ -62,10 +62,6 @@ async function createWebhook(channel: IChannel, channelType: any) {
                 messageEvent.message.to,
             );
 
-            console.log("zenvia-broker.ts, line 66 ---------------");
-            console.log({ userInput, typeof: typeof userInput });
-            console.log("-----------------------------------------");
-
             // Finds node and executes it
             ContextManager.handleRequest(userInput, channel)
                 .then(() => {
@@ -77,7 +73,7 @@ async function createWebhook(channel: IChannel, channelType: any) {
                     channel.sendMessage(
                         messageEvent.message.to,
                         messageEvent.message.from,
-                        createText(
+                        ...createText(
                             "Não é possível processar seu pedido no momento. Por favor, tente mais tarde.",
                         ),
                     );

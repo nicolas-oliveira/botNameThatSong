@@ -8,4 +8,5 @@ export type SongDetails = {
   album: string;
   song_link: string;
   spotify: Spotify;
+  apple_music: Apple_Music
 };

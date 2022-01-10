@@ -1,8 +1,12 @@
+import { IMessage, IMessageBatch } from "@zenvia/sdk";
+import config from "../../config";
+import ApiError from "../../errors/api-error";
 import NodeRuntimeError from "../../errors/node-runtime-error";
 import createButtons from "../../factories/button-content-factory";
 import createFile from "../../factories/file-content-factory";
 import createText from "../../factories/text-content-factory";
 import Logger from "../../utils/default-logger";
+import contextManager from "../context-manager";
 import nodeEngine from "../node-engine";
 import NodeEngine from "../node-engine";
 import { CallbackBundle } from "./callback-bundle";
@@ -21,7 +25,7 @@ export default abstract class AbstractNode {
      * This function will execute the actual code inside the Node
      * @param input - Input provided by user
      */
-    public abstract run(input: UserInput): Promise<void> | void;
+    public abstract run(input: UserInput, extra?: any): Promise<void> | void;
 
     /**
      * This function will tell context manager which flow it should go to next
@@ -33,21 +37,26 @@ export default abstract class AbstractNode {
         else
             Logger.error(
                 "Node " +
-                    this.getID() +
-                    " is trying to go to non-existant Node " +
-                    id +
-                    "!",
+                this.getID() +
+                " is trying to go to non-existant Node " +
+                id +
+                "!",
             );
     }
 
-    public async runNode(nodeID: number, userInput: UserInput): Promise<void> {
+    public async runNode(nodeID: number, userInput: UserInput, extra?: any): Promise<void> {
         let node: AbstractNode = nodeEngine.getNodeFromRegistry(nodeID);
 
         node.setCallbackBundle(this.callbackBundle); // Sets context
+
         try {
-            node.run(userInput); // Runs node
+            await node.run(userInput, extra); // Runs node
         } catch (error) {
-            throw new NodeRuntimeError("Error while running node " + nodeID);
+            if (error instanceof ApiError) {
+                this.sendTextMessage(...(await contextManager.handleApiError(userInput)));
+            } else {
+                Logger.error("Error while running Node " + this.getID(), error);
+            }
         }
     }
 
@@ -55,8 +64,8 @@ export default abstract class AbstractNode {
      * Sends the user a message of text type
      * @param text - Message to be sent to the user
      */
-    public async sendTextMessage(text: string): Promise<void> {
-        return await this.callbackBundle.messageCallback(createText(text));
+    public async sendTextMessage(...text: string[]): Promise<IMessage> {
+        return this.callbackBundle.messageCallback(...createText(...text));
     }
 
     /**
@@ -81,7 +90,7 @@ export default abstract class AbstractNode {
     public async sendAudioMessage(
         audioUrl: string,
         type?: string,
-    ): Promise<void> {
+    ): Promise<IMessage> {
         return this.callbackBundle.messageCallback(
             createFile(audioUrl, type ? type : "audio/mpeg"),
         );
@@ -92,16 +101,17 @@ export default abstract class AbstractNode {
      * @param key - Key of global variable
      * @param value - Value of global variable
      */
-    public async setGlobal(key: string, value: Object): Promise<void> {
-        return this.callbackBundle.setGlobalCallback(key, value);
+    public async setGlobals(...pairs: Record<string, any>[]): Promise<void> {
+
+        return this.callbackBundle.setGlobalsCallback(...pairs);
     }
 
     /**
      * Retrieves a variable's value according to its key
      * @param key - Key of global variable
      */
-    public async getGlobal(key: string): Promise<Object> {
-        return await this.callbackBundle.getGlobalCallback(key);
+    public async getGlobals(...keys: string[]): Promise<any> {
+        return await this.callbackBundle.getGlobalsCallback(...keys);
     }
 
     /**

@@ -29,10 +29,12 @@ export async function setUserCurrentNode(userID: string, nodeID: number) {
     }
 }
 
-export async function setGlobal(userID: string, key: string, data: Object) {
+export async function setGlobals(userID: string, ...pairs: Record<string, any>[]) {
     try {
         let globalsObject = {};
-        globalsObject["globals." + key] = data;
+        for (const pair of pairs) {
+            globalsObject["globals." + Object.keys(pair)[0]] = Object.values(pair)[0];
+        }
 
         return await userSchema.findOneAndUpdate({ userID },
             {
@@ -43,10 +45,22 @@ export async function setGlobal(userID: string, key: string, data: Object) {
     }
 }
 
-export async function getGlobal(userID: string, key: string) {
+export async function getGlobals(userID: string, ...keys: string[]) {
     try {
+
         const result = (await userSchema.findOne({ userID }, "globals"));
-        return (key ? result.globals[key] : result.globals);
+        if (!keys) {
+            return result.globals;
+        }
+        if (keys.length == 1) {
+            return result.globals[keys[0]];
+        }
+        const returnObj = {};
+        for (const key of keys) {
+            returnObj[key] = result.globals[key];
+        }
+        return returnObj;
+
     } catch (error) {
         throw new DatabaseError("Error while trying to Get Global in MongoDB");
     }

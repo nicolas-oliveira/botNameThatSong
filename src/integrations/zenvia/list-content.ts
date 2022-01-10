@@ -1,31 +1,39 @@
 import axios from "axios";
-import WhatsappButtons from "../../types/whatsapp-buttons";
+import WhatsappList from "../../types/whatsapp-list";
 
-export default function sendList(
-    from: string,
-    to: string,
-    buttons: WhatsappButtons,
-) {
+export default async function sendList(from: string, to: string, buttons: WhatsappList) {
     const config = {
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             "X-API-TOKEN": process.env.ZENVIA_TOKEN,
-        },
+        }
     };
-    return axios.post(
-        "https://api.zenvia.com/v2/channels/whatsapp/messages",
-        {
-            from: from,
-            to: to,
-            contents: [
-                {
-                    type: "button",
-                    body: buttons.getBody(),
-                    ...(buttons.getFooter() && { footer: buttons.getFooter() }),
-                    buttons: buttons.getButtons(),
-                },
-            ],
-        },
-        config,
-    );
+    const result = await axios.post("https://api.zenvia.com/v2/channels/whatsapp/messages", {
+        "from": from,
+        "to": to,
+        "contents": [
+            {
+                "type": "list",
+                "header": "Resultados",
+                "body": "Aqui está uma lista de músicas relacionadas",
+                "button": "Clique aqui para ver",
+                "sections":
+                    [
+                        {
+                            "title": "Resultados",
+                            "rows":
+                                [
+
+                                    {
+                                        "id": "1",
+                                        "title": "She will be loved",
+                                        "description": "Maroon 5"
+                                    }
+                                ]
+                        }
+
+                    ]
+            }
+        ]
+    }, config);
 }

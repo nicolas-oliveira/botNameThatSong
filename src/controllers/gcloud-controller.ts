@@ -1,5 +1,6 @@
 import { protos, v1p1beta1 as speech } from "@google-cloud/speech";
 import { google } from "@google-cloud/speech/build/protos/protos";
+import ApiError from "../errors/api-error";
 import getAndEncode from "../utils/base64-download";
 
 // Init Types
@@ -7,9 +8,8 @@ type SpeechRequest =
     protos.google.cloud.speech.v1p1beta1.ILongRunningRecognizeRequest;
 type RecognitionConfig = google.cloud.speech.v1p1beta1.IRecognitionConfig;
 
-async function transcript(url: string) {
+async function transcript(audioFile: string) {
     try {
-        const audioFile: string = await getAndEncode(url);
 
         const client = new speech.SpeechClient();
 
@@ -43,7 +43,7 @@ async function transcript(url: string) {
 
         return transcription;
     } catch (error) {
-        throw error;
+        throw new ApiError(error, "Error while trying to convert speech to text");
     }
 }
 
