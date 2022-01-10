@@ -20,6 +20,8 @@ a música tocada no áudio enviado pelo usuário, mas também pode
 reconhecer a música que o usuário falou ou cantou e também pode procurar
 músicas com a letra que o usuário enviou por texto.
 
+Ao achar a música no áudio, o Bot pode enviar a letra da música ou enviar um preview caso pedido pelo usuário.
+
 
 
 
