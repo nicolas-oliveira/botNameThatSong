@@ -26,6 +26,7 @@ export default class VerificarMenuDetalhes extends AbstractNode {
                     "Puts, não lembrei da letra dessa música 😣",
                     "Poderia tentar de novo mais tarde?")
             }
+
         } else if (input.getMessage() === "Ouvir um pedacinho") {
 
             // Go to preview node
@@ -34,7 +35,7 @@ export default class VerificarMenuDetalhes extends AbstractNode {
 
         } else if (input.getMessage() === "Tentar outra música") {
 
-            await this.sendTextMessage(
+            this.sendTextMessage(
                 "Ok, vamos tentar novamente",
                 "Envie um áudio com a música que deseja descobrir"
             );

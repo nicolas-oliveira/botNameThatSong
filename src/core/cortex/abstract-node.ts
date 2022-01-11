@@ -1,8 +1,6 @@
 import { IMessage, IMessageBatch } from "@zenvia/sdk";
-import config from "../../config";
 import ApiError from "../../errors/api-error";
-import NodeRuntimeError from "../../errors/node-runtime-error";
-import createButtons from "../../factories/button-content-factory";
+import { createButtons, createList } from "../../factories/whatsapp-content-factory";
 import createFile from "../../factories/file-content-factory";
 import createText from "../../factories/text-content-factory";
 import Logger from "../../utils/default-logger";
@@ -69,7 +67,7 @@ export default abstract class AbstractNode {
     }
 
     /**
-     * Sends the user a message of text type
+     * Sends the user a message of buttons type
      * @param text - Message to be sent to the user
      */
     public async sendButtons(
@@ -81,6 +79,23 @@ export default abstract class AbstractNode {
             createButtons(message, buttons, footer),
         );
     }
+
+    /**
+ * Sends the user a message of text type
+ * @param text - Message to be sent to the user
+ */
+    public async sendList(
+        message: string,
+        button: string,
+        header: string,
+        sectionName: string,
+        ...contents: { title: string, description: string }[]
+    ): Promise<void> {
+        return this.callbackBundle.listCallback(
+            createList(message, button, header, sectionName, ...contents),
+        );
+    }
+
 
     /**
      * Sends the user a message of audio type

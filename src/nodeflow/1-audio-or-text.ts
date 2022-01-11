@@ -1,5 +1,7 @@
 import AbstractNode from "../core/cortex/abstract-node";
 import { UserInput } from "../core/cortex/input-types";
+import sendList from "../integrations/zenvia/list-content";
+import WhatsappList from "../types/whatsapp-list";
 
 export default class Hello extends AbstractNode {
     public getID(): number {
@@ -23,6 +25,10 @@ export default class Hello extends AbstractNode {
 
             // Text
             this.runNode(30, input);
+            /*this.sendList("oi", "abra",
+                "Resultados", "seção",
+                { title: "Botão 1", description: "Descrição 1" },
+                { title: "Botão 2", description: "Descrição 2" });*/
         }
     }
 
