@@ -17,7 +17,7 @@ export default class WhatsappList {
         this.header = header;
         this.sectionName = sectionName;
         let id = 1;
-        this.contents = contents.map((content: { title: string, description: string }) => {
+        this.contents = contents.map((content: { title: string, description: string | undefined }) => {
             const obj = {
                 id: (id++).toString(),
                 title: content.title,

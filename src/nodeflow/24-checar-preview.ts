@@ -2,8 +2,8 @@ import AbstractNode from "../core/cortex/abstract-node";
 import { UserInput } from "../core/cortex/input-types";
 
 export default class ChecarPreview extends AbstractNode {
-    public getID(): number {
-        return 24;
+    public getID(): string {
+        return "node_LxmFllSS-omQ4VP";
     }
 
     public async run(input: UserInput, music): Promise<void> {
@@ -21,7 +21,7 @@ export default class ChecarPreview extends AbstractNode {
         }
         // Sends buttons again after two seconds
         setTimeout(() => this.sendButtons("Mais alguma coisa?",
-            ["Ver letra", "Tentar outra música", "Por enquanto é só"]), 2000);
+            ["Ver letra", "Tentar outra música", "Por enquanto é só"]), 3000);
         // Awaits for user input
         this.setNextInteractionNode(22);
     }

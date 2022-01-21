@@ -7,8 +7,8 @@ import greetings from '../utils/dictionary/greetings';
 import makeListFromGenius from "../utils/genius-helper";
 
 export default class Greetings extends AbstractNode {
-    public getID(): number {
-        return 30;
+    public getID(): string {
+        return "node_bNIGEIT8GnfElUK";
     }
 
     public async run(input: UserInput): Promise<void> {
@@ -20,7 +20,7 @@ export default class Greetings extends AbstractNode {
         } else if (input.getMessage().length >= config.MINIMUM_SEARCH_LENGTH) {
             if (input.getMessage().length <= config.MAXIMUM_SEARCH_LENGTH) {
                 const geniusSearch = (await searchGenius(input.getMessage())).response;
-                await this.sendTextMessage(...makeListFromGenius(geniusSearch));
+                await this.sendTextMessage(makeListFromGenius(geniusSearch));
             } else {
                 this.sendTextMessage(
                     "O texto que você mandou é muito grande!",

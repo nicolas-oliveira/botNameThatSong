@@ -4,8 +4,8 @@ import { UserInput } from "../core/cortex/input-types";
 import { SongDetails } from "../types/song";
 
 export default class VerificarMenuDetalhes extends AbstractNode {
-    public getID(): number {
-        return 22;
+    public getID(): string {
+        return "node_nnvXte8nngKR53E";
     }
 
     public async run(input: UserInput, music): Promise<void> {
