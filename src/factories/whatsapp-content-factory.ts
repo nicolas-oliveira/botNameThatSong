@@ -8,6 +8,6 @@ export function createButtons(body: string, buttons: string[], footer?: string):
 
 
 export function createList(body: string, button: string, header: string,
-    sectionName: string, ...contents: { title: string, description: string }[]): WhatsappList {
+    sectionName: string, ...contents: { title: string, description: string | undefined }[]): WhatsappList {
     return new WhatsappList(body, button, header, sectionName, ...contents);
 }

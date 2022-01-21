@@ -20,7 +20,7 @@ export default class Greetings extends AbstractNode {
         } else if (input.getMessage().length >= config.MINIMUM_SEARCH_LENGTH) {
             if (input.getMessage().length <= config.MAXIMUM_SEARCH_LENGTH) {
                 const geniusSearch = (await searchGenius(input.getMessage())).response;
-                await this.sendTextMessage(...makeListFromGenius(geniusSearch));
+                await this.sendTextMessage(makeListFromGenius(geniusSearch));
             } else {
                 this.sendTextMessage(
                     "O texto que você mandou é muito grande!",

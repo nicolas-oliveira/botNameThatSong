@@ -18,20 +18,20 @@ export default class MenuDetalhesNode extends AbstractNode {
             "O que você quer fazer?",
             {
                 title: "Ver letra",
-                description: "Posso mandar a letra inteira pra você",
+                description: undefined
             },
             {
                 title: "Ouvir um pedacinho",
-                description: "Posso mandar um trecho da música pra você",
+                description: undefined
             },
             {
                 title: "Tentar outra música",
-                description: "Podemos tentar de novo",
+                description: undefined
             },
             {
-                title: "Playlist no Spotify",
-                description: "Topa colocar essa musica no spotify?",
-            },
+                title: "Por enquanto é só",
+                description: undefined
+            }
         );
         // Awaits for user input
         this.setNextInteractionNode(22);

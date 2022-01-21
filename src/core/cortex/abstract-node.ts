@@ -35,16 +35,7 @@ export default abstract class AbstractNode {
      * @param {number} id - ID to which the flow will jump next
      */
     public async setNextInteractionNode(id: number | string): Promise<void> {
-        if (NodeEngine.isNodeSet(id as string))
-            this.callbackBundle.changeNodeCallback(id as string);
-        else
-            Logger.error(
-                "Node " +
-                this.getID() +
-                " is trying to go to non-existant Node " +
-                id +
-                "!",
-            );
+        this.callbackBundle.changeNodeCallback(getIDOrAlias(id));
     }
 
     public async runNode(nodeID: string | number, userInput: UserInput, extra?: any): Promise<void> {
@@ -94,7 +85,7 @@ export default abstract class AbstractNode {
         button: string,
         header: string,
         sectionName: string,
-        ...contents: { title: string, description: string }[]
+        ...contents: { title: string, description: string | undefined }[]
     ): Promise<void> {
         return this.callbackBundle.listCallback(
             createList(message, button, header, sectionName, ...contents),

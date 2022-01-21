@@ -87,8 +87,10 @@ class ContextManager {
                 );
                 return message;
             } catch (error) {
-                if (config.DEBUG)
+                if (config.DEBUG) {
                     Logger.error("Error while trying to send message to user " + userInput.getUserID());
+                    Logger.error(error);
+                }
                 else
                     throw new NodeRuntimeError("Error on sending message to user " + userInput.getUserID())
             }
@@ -112,6 +114,9 @@ class ContextManager {
 
         // Change Node Callback
         const changeNodeCallback = (nodeID: string) => {
+            if (!nodeEngine.isNodeSet(nodeID)) {
+                throw new NodeRuntimeError("Non-existant Node " + nodeID + "!");
+            }
             // Sets next node to specified ID
             setUserCurrentNode(userInput.getUserID(), nodeID);
         };

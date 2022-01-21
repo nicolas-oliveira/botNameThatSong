@@ -21,7 +21,7 @@ export default class ChecarPreview extends AbstractNode {
         }
         // Sends buttons again after two seconds
         setTimeout(() => this.sendButtons("Mais alguma coisa?",
-            ["Ver letra", "Tentar outra música", "Por enquanto é só"]), 2000);
+            ["Ver letra", "Tentar outra música", "Por enquanto é só"]), 3000);
         // Awaits for user input
         this.setNextInteractionNode(22);
     }
