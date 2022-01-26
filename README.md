@@ -45,7 +45,7 @@ mencionados e adquirir um token de desenvolvedor
 ## Orquestrador
 
 Nesse projeto, um Orquestrador foi criado do zero para organizar o fluxo do Bot
-e gerenciar as mensagens recebidas pela Zenvia.
+e gerenciar as mensagens recebidas pela Zenvia. <br>O objetivo é que qualquer desenvolvedor possa fazer um Bot de maneira rápida utilizando esse projeto.
 
 
 **Como o Orquestrador funciona**
@@ -142,8 +142,8 @@ import { UserInput } from "../core/cortex/input-types";
 
 export default class Teste extends AbstractNode {
 
-    public getID(): number {
-        return 1; // Cada nó deve possuir um ID único para identificação e execução
+    public getID(): string {
+        return "node_aRkA3kaM1lBVI20"; // Cada nó deve possuir um ID único para identificação e execução
     }
 
     public async run(input: UserInput): Promise<void> {
@@ -178,7 +178,7 @@ export default class Teste extends AbstractNode {
         this.getGlobals("idade", "nome"); // Retorno: {idade: 25, nome: "Marcela"}
 
         // Na próxima vez que o usuário interagir, ele será mandado para este nó
-        this.setNextInteractionNode(5);
+        this.setNextInteractionNode("node_m29alPcm27BAkl");
 
     }
 
