@@ -1,4 +1,3 @@
-
 ## Index
 
 - [Tech Stack](#tech-stack)
@@ -12,25 +11,18 @@
 - [Equipe](#squad-ômega)
 - [Extra](#extra)
 
+# NameThatSong
 
-
-
-# NameThatSong/MeFalaAMúsica
-
-Esse projeto é um Bot de WhatsApp que primariamente reconhece
-a música tocada no áudio enviado pelo usuário, mas também pode
-reconhecer a música que o usuário falou ou cantou e também pode procurar
-músicas com a letra que o usuário enviou por texto.
+Esse projeto é um Bot de WhatsApp que:
+- Reconhece a música tocada no áudio enviado pelo usuário
+- também reconhece a música que o usuário falou ou cantou 
+- também pode procurar músicas com a letra que o usuário enviou por texto.
 
 Ao achar a música no áudio, o Bot pode enviar a letra da música ou enviar um preview caso pedido pelo usuário.
-
-
-
 
 ## Tech Stack
 
 NodeJS | TypeScript | Express | MongoDB
-
 
 ## Dependências
 
@@ -39,13 +31,11 @@ ZenviaSDK | AudD | GeniusAPI | Google Cloud Platform
 Para rodar o Bot, é necessário criar uma conta nos serviços
 mencionados e adquirir um token de desenvolvedor
 
-
-
-
 ## Orquestrador
 
-Nesse projeto, um Orquestrador foi criado do zero para organizar o fluxo do Bot
-e gerenciar as mensagens recebidas pela Zenvia. <br>O objetivo é que qualquer desenvolvedor possa fazer um Bot de maneira rápida utilizando esse projeto.
+Nesse projeto, um Orquestrador foi criado do zero para organizar o fluxo do Bot, possibilitando que **novos fluxos sejam criados a partir dele**, podendo ter qualquer objetivo já que a criação de novos nós (clasess) é genérico e multi-uso. Outra função é gerenciar as mensagens recebidas pela Zenvia.
+
+O objetivo é que qualquer desenvolvedor possa fazer um Bot de maneira rápida utilizando esse projeto.
 
 
 **Como o Orquestrador funciona**
