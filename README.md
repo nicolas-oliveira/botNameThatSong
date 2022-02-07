@@ -20,16 +20,17 @@ Esse projeto é um Bot de WhatsApp que:
 
 Ao achar a música no áudio, o Bot pode enviar a letra da música ou enviar um preview caso pedido pelo usuário.
 
-## Tech Stack
-
-NodeJS | TypeScript | Express | MongoDB
 
 ## Dependências
+É necessário ter as chaves / tokens com contas ativas nas seguintes plataformas:
+- ZenviaSDK | AudD | GeniusAPI | Google Cloud Platform
 
-ZenviaSDK | AudD | GeniusAPI | Google Cloud Platform
-
-Para rodar o Bot, é necessário criar uma conta nos serviços
-mencionados e adquirir um token de desenvolvedor
+Bibliotecas e ferramentas necessárias:
+- yarn ou npm
+- MongoDB
+- Typescript
+- Express
+- Nodejs >= 12.13.0
 
 ## Orquestrador
 
@@ -37,13 +38,12 @@ Nesse projeto, um Orquestrador foi criado do zero para organizar o fluxo do Bot,
 
 O objetivo é que qualquer desenvolvedor possa fazer um Bot de maneira rápida utilizando esse projeto.
 
-
-**Como o Orquestrador funciona**
+## Como o Orquestrador funciona
 
 ![Fluxo](https://i.imgur.com/Y9iuCcC.jpg)
 
 
-**Node Flow**
+## Node Flow
 
 Os Nós (Nodes) são classes com IDs específicos que rodam
 um pedaço da lógica do Bot. 
@@ -61,22 +61,25 @@ Versão Recomendada NodeJS: v12.13.0
 
 ```bash
   git clone https://github.com/NameThatSong/Orchestrator.git
-
-  cd Orchestrator
-
-  npm install
-
-  Para development:
-
-  npm run dev
-
-  Para production:
-
-  npm run build
-
-  npm run start
-
 ```
+```bash
+  cd Orchestrator
+```
+```bash
+  yarn install
+```
+  Para development:
+```bash
+  yarn dev
+```
+  Para production:
+```bash
+  yarn build
+```
+```bash
+  yarn start
+```
+
 
 Depois de rodar o programa, é necessário configurar a sua conta Zenvia.
 
@@ -86,17 +89,19 @@ Depois de rodar o programa, é necessário configurar a sua conta Zenvia.
 
 Para o Bot funcionar, é necessário as chaves:
 
-`ZENVIA_TOKEN=Token da Zenvia`
+```env
+ZENVIA_TOKEN=Token da Zenvia
 
-`AUDD_TOKEN=Token da AudD`
+AUDD_TOKEN=Token da AudD
 
-`GOOGLE_APPLICATION_CREDENTIALS=Credenciais baixadas da plataforma do Google (default: gcp_credentials.json)`
+GOOGLE_APPLICATION_CREDENTIALS=Credenciais baixadas da plataforma do Google (default: gcp_credentials.json)
 
-`GENIUS_TOKEN=Credenciais da API do Genius`
+GENIUS_TOKEN=Credenciais da API do Genius
 
-`MONGODB_URL=Url de Conexão do MongoDB`
+MONGODB_URL=Url de Conexão do MongoDB
 
-`CHANNEL=whatsapp`
+CHANNEL=whatsapp
+```
 
 ## Logs
 
@@ -106,25 +111,29 @@ O Bot mantém logs separados pelo dia atual, por exemplo:
 
 ## Config
 
-Esta configuração altera valores importantes no Bot. Caso esteja em prod, a configuração estará em "build/config.js", caso contrário, em "src/config.ts".
+Esta configuração altera valores importantes no Bot. Caso esteja em prod, a configuração estará em [build/config.ts](build/config.ts), caso contrário, em [src/config.ts](src/config.ts).
 
-    DEBUG <- Se o Bot está em modo Debug
+```js
+const config = {
+    DEBUG // Se o Bot está em modo Debug
 
-    RESET_TIME <- Quanto tempo deve passar desde a última interação para o Bot reiniciar a interação do usuário
+    RESET_TIME // Quanto tempo deve passar desde a última interação para o Bot reiniciar a interação do usuário
 
-    MINIMUM_SEARCH_LENGTH <- Mínimo de caracteres necessários para o Bot considerar como pesquisa por letra da música
+    MINIMUM_SEARCH_LENGTH // Mínimo de caracteres necessários para o Bot considerar como pesquisa por letra da música
     
-    MAXIMUM_SEARCH_LENGTH <- Máximo número de caracteres em pesquisa por letra da música
+    MAXIMUM_SEARCH_LENGTH // Máximo número de caracteres em pesquisa por letra da música
 
-    MINIMUM_AUDIO_FILE_SIZE <- Tamanho mínimo de arquivo de áudio
+    MINIMUM_AUDIO_FILE_SIZE // Tamanho mínimo de arquivo de áudio
 
-    MAX_GENIUS_RESULTS <- Quantos resultados devem retornar pro usuário
+    MAX_GENIUS_RESULTS // Quantos resultados devem retornar pro usuário
 
-    AUDIO_SAMPLE_RATE <- Sample Rate do Áudio dos usuários (Isso será alterado no futuro)
+    AUDIO_SAMPLE_RATE // Sample Rate do Áudio dos usuários (Isso será alterado no futuro)
+}
+```
 
 ## Node Docs
 
-Abaixo segue um exemplo de um nó com métodos úteis
+Para criar um nó você precisa colocar uma classe nova dentro de uma pasta especificada:
 
 ```ts
 import AbstractNode from "../core/cortex/abstract-node";
@@ -138,42 +147,49 @@ export default class Teste extends AbstractNode {
 
     public async run(input: UserInput): Promise<void> {
         
-        if (input.isAudio()) {
-            // Verifica se a input é audio
-        }
-
-        if (input.getMessage() === "Oi") {
-            // Executa esse bloco de código se a mensagem for igual a 'Oi'
-
-            // Roda o Nó de ID 2 com a mesma input recebida por esse Nó
-            this.runNode(2, input);
-        }
-
-        if (input.getMessage() === "Quem é você?") {
-
-        // Envia uma mensagem de texto para o usuário
-        this.sendTextMessage("Olá, sou um Bot Teste!"); 
-
-        // Envia uma mensagem de audio para o usuário, o tipo deve ser especificado (mpeg, mp4, etc)
-        this.sendAudioMessage("url-do-audio", "audio/mpeg");
-
-        }
-
-        // É possível setar variáveis para este usuário específico
-        // Para que no futuro elas possam ser recuperadas
-        this.setGlobals({"idade": 25});
-        this.setGlobals({"nome": "Marcela"},{"hobby": "vôlei"});
-
-        this.getGlobals("hobby"); // Retorno: "vôlei"
-        this.getGlobals("idade", "nome"); // Retorno: {idade: 25, nome: "Marcela"}
-
-        // Na próxima vez que o usuário interagir, ele será mandado para este nó
-        this.setNextInteractionNode("node_m29alPcm27BAkl");
 
     }
 
 }
+```
+Dentro da classe `run()` a lógica pode ser feita conforme a necessidade do desenvolvedor. As possibilidades são:
+```ts
+ if (input.isAudio()) {
+      // Verifica se a input é audio  
+  }
+```
 
+```ts
+if (input.getMessage() === "Oi") {
+    // Executa esse bloco de código se a mensagem for igual a 'Oi'
+
+    // Roda o Nó de ID 2 com a mesma input recebida por esse Nó
+    this.runNode(2, input);
+}
+```
+
+```ts
+if (input.getMessage() === "Quem é você?") {
+
+// Envia uma mensagem de texto para o usuário
+this.sendTextMessage("Olá, sou um Bot Teste!"); 
+
+// Envia uma mensagem de audio para o usuário, o tipo deve ser especificado (mpeg, mp4, etc)
+this.sendAudioMessage("url-do-audio", "audio/mpeg");
+}
+```
+
+```ts
+// É possível setar variáveis para este usuário específico
+// Para que no futuro elas possam ser recuperadas
+this.setGlobals({"idade": 25});
+this.setGlobals({"nome": "Marcela"},{"hobby": "vôlei"});
+
+this.getGlobals("hobby"); // Retorno: "vôlei"
+this.getGlobals("idade", "nome"); // Retorno: {idade: 25, nome: "Marcela"}
+
+// Na próxima vez que o usuário interagir, ele será mandado para este nó
+this.setNextInteractionNode("node_m29alPcm27BAkl");
 ```
 
 ## Squad Ômega
